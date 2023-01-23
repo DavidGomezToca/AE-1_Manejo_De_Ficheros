@@ -4,16 +4,16 @@ import java.io.Serializable;
 
 public class Coche implements Serializable {
     private int id;
-    private String licensePlate;
-    private String brand;
-    private String model;
+    private String matricula;
+    private String marca;
+    private String modelo;
     private String color;
 
     public Coche(int id, String licensePlate, String brand, String model, String color) {
         this.id = id;
-        this.licensePlate = licensePlate;
-        this.brand = brand;
-        this.model = model;
+        this.matricula = licensePlate;
+        this.marca = brand;
+        this.modelo = model;
         this.color = color;
     }
 
@@ -26,27 +26,27 @@ public class Coche implements Serializable {
     }
 
     public String getLicensePlate() {
-        return licensePlate;
+        return matricula;
     }
 
     public void setLicensePlate(String licensePlate) {
-        this.licensePlate = licensePlate;
+        this.matricula = licensePlate;
     }
 
     public String getBrand() {
-        return brand;
+        return marca;
     }
 
     public void setBrand(String brand) {
-        this.brand = brand;
+        this.marca = brand;
     }
 
     public String getModel() {
-        return model;
+        return modelo;
     }
 
     public void setModel(String model) {
-        this.model = model;
+        this.modelo = model;
     }
 
     public String getColor() {

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Programa {
@@ -25,9 +27,9 @@ public class Programa {
 			fis = new FileInputStream(FILE_NAME);
 			ois = new ObjectInputStream(fis);
 			coches = (ArrayList<Coche>) ois.readObject();
-			System.out.println("Archivo leido");
+			System.out.println("Archivo " + FILE_NAME + " leido");
 		} catch (FileNotFoundException e) {
-			System.out.println("Archivo no encontrado");
+			System.out.println("Archivo " + FILE_NAME + " no encontrado");
 		} catch (IOException e) {
 			System.err.println("Error al leer el archivo: " + e.getMessage());
 		} catch (ClassNotFoundException e) {
@@ -48,19 +50,19 @@ public class Programa {
 
 	private static void desplegarMenu() {
 		Scanner input = new Scanner(System.in);
-		int option = 0;
-		while (option != 5) {
-			System.out.println("Menu:");
+		int opcion = 0;
+		while (opcion != 5) {
+			System.out.println("\nMenu:");
 			System.out.println("1. Añadir nuevo coche");
 			System.out.println("2. Borrar coche por id");
 			System.out.println("3. Consultar coche por id");
 			System.out.println("4. Listado de coches");
 			System.out.println("5. Terminar el programa");
 			System.out.print("Seleccione una opción: ");
-			option = input.nextInt();
-			switch (option) {
+			opcion = input.nextInt();
+			switch (opcion) {
 			case 1:
-				aumentarCoche();
+				agregarCoche();
 				break;
 			case 2:
 				borrarCoche();
@@ -81,48 +83,55 @@ public class Programa {
 		}
 	}
 
-	private static void aumentarCoche() {
+	private static void agregarCoche() {
 		Scanner input = new Scanner(System.in);
-		System.out.print("Ingrese el id: ");
+		System.out.print("\nIngrese el ID: ");
 		int id = input.nextInt();
-		input.nextLine();
-		System.out.print("Ingrese la matrícula: ");
-		String matricula = input.nextLine();
-		System.out.print("Ingrese la marca: ");
-		String marca = input.nextLine();
-		System.out.print("Ingrese el modelo: ");
-		String modelo = input.nextLine();
-		System.out.print("Ingrese el color: ");
-		String color = input.nextLine();
+		for (Coche coche : coches) {
+			if (coche.getId() == id) {
+				System.out.println("Ya existe un coche registrado con el ID " + id);
+				return;
+			} else {
+				input.nextLine();
+				System.out.print("Ingrese la matrícula: ");
+				String matricula = input.nextLine();
+				System.out.print("Ingrese la marca: ");
+				String marca = input.nextLine();
+				System.out.print("Ingrese el modelo: ");
+				String modelo = input.nextLine();
+				System.out.print("Ingrese el color: ");
+				String color = input.nextLine();
 
-		Coche newCar = new Coche(id, matricula, marca, modelo, color);
-		coches.add(newCar);
-		System.out.println("Coche agregado");
+				Coche nuevoCoche = new Coche(id, matricula, marca, modelo, color);
+				coches.add(nuevoCoche);
+				System.out.println("-- Coche agregado --");
+			}
+		}
 	}
 
 	private static void borrarCoche() {
 		Scanner input = new Scanner(System.in);
-		System.out.print("Ingrese el id del coche a borrar: ");
+		System.out.print("\nIngrese el ID del coche a borrar: ");
 		int id = input.nextInt();
 
 		for (int i = 0; i < coches.size(); i++) {
 			if (coches.get(i).getId() == id) {
 				coches.remove(i);
-				System.out.println("Coche borrado");
+				System.out.println("-- Coche borrado --");
 				return;
 			}
 		}
-		System.out.println("No se encontró ningún coche con ese id");
+		System.out.println("No se encontró ningún coche con ese ID");
 	}
 
 	private static void consultarID() {
 		Scanner input = new Scanner(System.in);
-		System.out.print("Ingrese el id del coche a consultar: ");
+		System.out.print("\nIngrese el ID del coche a consultar: ");
 		int id = input.nextInt();
 
 		for (Coche coche : coches) {
 			if (coche.getId() == id) {
-				System.out.println("Id: " + coche.getId());
+				System.out.println("ID: " + coche.getId());
 				System.out.println("Matrícula: " + coche.getLicensePlate());
 				System.out.println("Marca: " + coche.getBrand());
 				System.out.println("Modelo: " + coche.getModel());
@@ -130,17 +139,28 @@ public class Programa {
 				return;
 			}
 		}
-		System.out.println("No se encontró ningún coche con ese id");
+		System.out.println("No se encontró ningún coche con ese ID");
 	}
 
 	private static void listarCoches() {
-		for (Coche coche : coches) {
-			System.out.println("Id: " + coche.getId());
-			System.out.println("Matrícula: " + coche.getLicensePlate());
-			System.out.println("Marca: " + coche.getBrand());
-			System.out.println("Modelo: " + coche.getModel());
-			System.out.println("Color: " + coche.getColor());
-			System.out.println("------------------");
+		System.out.println();
+		if (coches.isEmpty()) {
+			System.out.println("No hay coches almacenados");
+		} else {
+			Collections.sort(coches, new Comparator<Coche>() {
+				@Override
+				public int compare(Coche coche1, Coche coche2) {
+					return coche1.getId() - coche2.getId();
+				}
+			});
+			for (Coche coche : coches) {
+				System.out.println("ID: " + coche.getId());
+				System.out.println("Matrícula: " + coche.getLicensePlate());
+				System.out.println("Marca: " + coche.getBrand());
+				System.out.println("Modelo: " + coche.getModel());
+				System.out.println("Color: " + coche.getColor());
+				System.out.println("------------------");
+			}
 		}
 	}
 
@@ -151,7 +171,7 @@ public class Programa {
 			fos = new FileOutputStream(FILE_NAME);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(coches);
-			System.out.println("Archivo escrito");
+			System.out.println("\nArchivo generado");
 		} catch (FileNotFoundException e) {
 			System.err.println("Error al crear el archivo: " + e.getMessage());
 		} catch (IOException e) {
